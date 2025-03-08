@@ -1,3 +1,5 @@
+
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -24,7 +26,9 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md py-2" : "bg-transparent py-4"
+        scrolled
+          ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md py-2"
+          : "bg-transparent py-4"
       }`}
     >
       <div className="container mx-auto px-4">
@@ -34,7 +38,11 @@ export default function Navbar() {
               <LeafyGreen className="h-6 w-6 text-white" />
             </div>
             <span
-              className={`font-bold text-xl ${scrolled ? "text-green-700 dark:text-green-400" : "text-green-700 dark:text-white"}`}
+              className={`font-bold text-xl ${
+                scrolled
+                  ? "text-green-700 dark:text-green-400"
+                  : "text-green-700 dark:text-white"
+              }`}
             >
               EcoLearn
             </span>
@@ -44,28 +52,44 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className={`${scrolled ? "text-gray-700 dark:text-gray-300" : "text-gray-700 dark:text-white"} hover:text-green-500 dark:hover:text-green-400 transition-colors relative group`}
+              className={`${
+                scrolled
+                  ? "text-gray-700 dark:text-gray-300"
+                  : "text-gray-700 dark:text-white"
+              } hover:text-green-500 dark:hover:text-green-400 transition-colors relative group`}
             >
               Home
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link
               href="/content"
-              className={`${scrolled ? "text-gray-700 dark:text-gray-300" : "text-gray-700 dark:text-white"} hover:text-green-500 dark:hover:text-green-400 transition-colors relative group`}
+              className={`${
+                scrolled
+                  ? "text-gray-700 dark:text-gray-300"
+                  : "text-gray-700 dark:text-white"
+              } hover:text-green-500 dark:hover:text-green-400 transition-colors relative group`}
             >
               Educational Content
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link
               href="/calc"
-              className={`${scrolled ? "text-gray-700 dark:text-gray-300" : "text-gray-700 dark:text-white"} hover:text-green-500 dark:hover:text-green-400 transition-colors relative group`}
+              className={`${
+                scrolled
+                  ? "text-gray-700 dark:text-gray-300"
+                  : "text-gray-700 dark:text-white"
+              } hover:text-green-500 dark:hover:text-green-400 transition-colors relative group`}
             >
               Vehicle CO2 Calculator
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link
               href="/eco-tracker"
-              className={`${scrolled ? "text-gray-700 dark:text-gray-300" : "text-gray-700 dark:text-white"} hover:text-green-500 dark:hover:text-green-400 transition-colors relative group`}
+              className={`${
+                scrolled
+                  ? "text-gray-700 dark:text-gray-300"
+                  : "text-gray-700 dark:text-white"
+              } hover:text-green-500 dark:hover:text-green-400 transition-colors relative group`}
             >
               Keep It green Tracker
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-500 transition-all duration-300 group-hover:w-full"></span>
@@ -76,7 +100,11 @@ export default function Navbar() {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`${scrolled ? "text-gray-700 dark:text-gray-300" : "text-gray-700 dark:text-white"} focus:outline-none`}
+              className={`${
+                scrolled
+                  ? "text-gray-700 dark:text-gray-300"
+                  : "text-gray-700 dark:text-white"
+              } focus:outline-none`}
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -90,28 +118,28 @@ export default function Navbar() {
           <div className="container mx-auto px-4 flex flex-col space-y-4">
             <Link
               href="/"
-              className="block py-2 px-4 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+              className="block py-2 px-4 text-black hover:bg-green-50 dark:text-white dark:hover:bg-green-900/20 rounded-lg transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Home
             </Link>
             <Link
               href="/content"
-              className="block py-2 px-4 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+              className="block py-2 px-4 text-black hover:bg-green-50 dark:text-white dark:hover:bg-green-900/20 rounded-lg transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Educational Content
             </Link>
             <Link
               href="/calc"
-              className="block py-2 px-4 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+              className="block py-2 px-4 text-black hover:bg-green-50 dark:text-white dark:hover:bg-green-900/20 rounded-lg transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               CO2 Calculator
             </Link>
             <Link
               href="/eco-tracker"
-              className="block py-2 px-4 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+              className="block py-2 px-4 text-black hover:bg-green-50 dark:text-white dark:hover:bg-green-900/20 rounded-lg transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Eco Tracker
@@ -122,4 +150,3 @@ export default function Navbar() {
     </nav>
   )
 }
-

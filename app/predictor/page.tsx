@@ -58,8 +58,7 @@ export default function PredictorPage() {
         setError(err instanceof Error ? err.message : "An unknown error occurred")
         await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for 3 seconds before retrying
       }
-    }
-     finally {
+    } finally {
       setIsLoading(false)
     }
   }

@@ -44,24 +44,25 @@ export default function PredictorPage() {
     return await response.json()
   }
 
-  const handleSubmit = async (data: FormData) => {
-    setIsLoading(true)
-    setError(null)
+ const handleSubmit = async (data: FormData) => {
+  setIsLoading(true)
+  setError(null)
 
-    let success = false;
+  let success = false;
+  try {
     while (!success) {
-      try {
-        const result = await fetchPrediction(data)
-        setResult(result)
-        success = true;
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An unknown error occurred")
-        await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for 3 seconds before retrying
-      }
-    } finally {
-      setIsLoading(false)
+      const result = await fetchPrediction(data)
+      setResult(result)
+      success = true;
     }
+  } catch (err) {
+    setError(err instanceof Error ? err.message : "An unknown error occurred")
+    await new Promise((resolve) => setTimeout(resolve, 3000)) // Wait for 3 seconds before retrying
+  } finally {
+    setIsLoading(false)
   }
+};
+
 
   return (
     <div className="container mx-auto px-4 py-8">

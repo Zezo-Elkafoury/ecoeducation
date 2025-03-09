@@ -13,13 +13,9 @@ import { Mic, Search, CalendarIcon, Check, Plus, X, Trash2 } from "lucide-react"
 import { format } from "date-fns"
 import type { EcoAction } from "@/lib/eco-tracker/types"
 import { Badge } from "@/components/ui/badge"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { categoryIcons, getCategoryColor } from "@/lib/eco-tracker/utils"
-import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-
-// Real Speech Recognition
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 export default function ActionLogging() {
   const { userData, onAddAction, onRemoveAction, onAddCustomAction } = useUser()
@@ -61,7 +57,12 @@ export default function ActionLogging() {
     return recent
   }, [userData.logs, userData.availableActions])
 
+  // Fix for "window is not defined" issue
   const handleStartListening = () => {
+    if (typeof window === "undefined") return // Prevents server-side errors
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+
     if (!SpeechRecognition) {
       alert("Your browser does not support Speech Recognition.")
       return

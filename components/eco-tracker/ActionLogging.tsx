@@ -9,21 +9,25 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Label } from "@/components/ui/label"
-import { Search, CalendarIcon, Check, Plus, X, Trash2 } from "lucide-react"
+import { Mic, Search, CalendarIcon, Check, Plus, X, Trash2 } from "lucide-react"
 import { format } from "date-fns"
 import type { EcoAction } from "@/lib/eco-tracker/types"
 import { Badge } from "@/components/ui/badge"
 import { motion, AnimatePresence } from "framer-motion"
 import { categoryIcons, getCategoryColor } from "@/lib/eco-tracker/utils"
-import { EcoCard } from "./EcoCard"
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+
+// Real Speech Recognition
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 export default function ActionLogging() {
   const { userData, onAddAction, onRemoveAction, onAddCustomAction } = useUser()
   const [update, setUpdate] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [isListening, setIsListening] = useState(false)
+  const [voiceText, setVoiceText] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [customAction, setCustomAction] = useState("")
   const [showAddCustom, setShowAddCustom] = useState(false)
@@ -42,7 +46,6 @@ export default function ActionLogging() {
     setUpdate((prev) => !prev)
   }, [userData.logs.length])
 
-  // Simulate fetching recently used actions from user history
   const recentlyUsedMemo = useMemo(() => {
     const recent = userData.logs.slice(0, 5).map((log) => {
       return (
@@ -58,10 +61,37 @@ export default function ActionLogging() {
     return recent
   }, [userData.logs, userData.availableActions])
 
+  const handleStartListening = () => {
+    if (!SpeechRecognition) {
+      alert("Your browser does not support Speech Recognition.")
+      return
+    }
+
+    const recognition = new SpeechRecognition()
+    recognition.continuous = false
+    recognition.lang = "en-US"
+
+    recognition.onstart = () => setIsListening(true)
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript
+      setVoiceText(transcript)
+    }
+
+    recognition.onend = () => setIsListening(false)
+    recognition.onerror = (event) => {
+      console.error("Speech Recognition Error:", event.error)
+      setIsListening(false)
+    }
+
+    recognition.start()
+  }
+
   const handleLogAction = (action: EcoAction) => {
     onAddAction(action, new Date())
-
-    const newRecentlyUsed = [action, ...recentlyUsed.filter((a) => a.id !== action.id)].slice(0, 5)
+    const newRecentlyUsed = [
+      action,
+      ...recentlyUsed.filter((a) => a.id !== action.id)
+    ].slice(0, 5)
     setRecentlyUsed(newRecentlyUsed)
   }
 
@@ -79,7 +109,6 @@ export default function ActionLogging() {
     setCustomAction("")
     setShowAddCustom(false)
 
-    // Reset impact values to defaults
     setCustomImpact({
       co2Saved: 1.0,
       wasteSaved: 0.2,
@@ -101,12 +130,9 @@ export default function ActionLogging() {
     setShowDeleteDialog(true)
   }
 
-  // Filter actions based on search and category
   const filteredActions = userData.availableActions.filter((action) => {
     const matchesSearch = searchQuery === "" || action.name.toLowerCase().includes(searchQuery.toLowerCase())
-
     const matchesCategory = selectedCategory === null || action.category === selectedCategory
-
     return matchesSearch && matchesCategory
   })
 
@@ -127,6 +153,7 @@ export default function ActionLogging() {
               {format(selectedDate, "PPP")}
             </Button>
           </PopoverTrigger>
+
           <PopoverContent className="w-auto p-0" align="end">
             <Calendar
               mode="single"
@@ -139,51 +166,33 @@ export default function ActionLogging() {
         </Popover>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
-          <Tabs defaultValue="all">
-            <div className="flex justify-between items-start mb-4">
-              <TabsList>
-                <TabsTrigger value="all">All Actions</TabsTrigger>
-                <TabsTrigger value="recent">Recently Used</TabsTrigger>
-                <TabsTrigger value="custom">Custom</TabsTrigger>
-              </TabsList>
-
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search actions..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-full md:w-auto"
-                />
-              </div>
-            </div>
-
-            <TabsContent value="all" className="space-y-4">
-              <ScrollArea className="h-[400px] pr-4">
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {filteredActions.map((action) => (
-                    <motion.li
-                      key={action.id}
-                      className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-green-500 hover:shadow-md transition-all duration-200"
-                      onClick={() => handleLogAction(action)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Badge className={getCategoryColor(action.category)}>
-                          {categoryIcons[action.category] || "♻️"}
-                        </Badge>
-                        <span>{action.name}</span>
-                      </div>
-                      <div className="text-xs text-gray-500">-{action.impact.co2Saved} kg CO₂</div>
-                    </motion.li>
-                  ))}
-                </ul>
-              </ScrollArea>
-            </TabsContent>
-          </Tabs>
-        </div>
+      <div className="flex items-center gap-4">
+        <Button onClick={handleStartListening}>
+          <Mic className="h-5 w-5" />
+          {isListening ? "Listening..." : "Start Listening"}
+        </Button>
+        <p className="text-sm">{voiceText && `You said: "${voiceText}"`}</p>
       </div>
+
+      <ScrollArea className="h-[400px] pr-4">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {filteredActions.map((action) => (
+            <motion.li
+              key={action.id}
+              className="flex items-center justify-between p-4 rounded-lg border hover:border-green-500 hover:shadow-md transition-all duration-200 cursor-pointer"
+              onClick={() => handleLogAction(action)}
+            >
+              <div className="flex items-center gap-3">
+                <Badge className={getCategoryColor(action.category)}>
+                  {categoryIcons[action.category] || "♻️"}
+                </Badge>
+                <span>{action.name}</span>
+              </div>
+              <div className="text-xs text-gray-500">-{action.impact.co2Saved} kg CO₂</div>
+            </motion.li>
+          ))}
+        </ul>
+      </ScrollArea>
     </div>
   )
 }

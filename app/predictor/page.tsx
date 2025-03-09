@@ -47,20 +47,27 @@ export default function PredictorPage() {
  const handleSubmit = async (data: FormData) => {
   setIsLoading(true)
   setError(null)
+  setResult(null)
 
-  let success = false;
-  try {
-    while (!success) {
+  const maxRetries = 3
+  let attempts = 0
+
+  while (attempts < maxRetries) {
+    try {
       const result = await fetchPrediction(data)
       setResult(result)
-      success = true;
+      return // Exit the loop on success
+    } catch (err) {
+      attempts++
+      if (attempts < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, 2000 * attempts)) // Exponential backoff
+      } else {
+        setError(err instanceof Error ? err.message : "An unknown error occurred")
+      }
     }
-  } catch (err) {
-    setError(err instanceof Error ? err.message : "An unknown error occurred")
-    await new Promise((resolve) => setTimeout(resolve, 3000)) // Wait for 3 seconds before retrying
-  } finally {
-    setIsLoading(false)
   }
+
+  setIsLoading(false)
 };
 
 

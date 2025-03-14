@@ -29,7 +29,7 @@ export default function PredictorPage() {
   const [result, setResult] = useState<PredictionResult | null>(null)
 
   const fetchPrediction = async (data: FormData): Promise<PredictionResult> => {
-    const response = await fetch("https://underlying-tiffany-ziad-2007-547ae087.koyeb.app/co2_predict", {
+    const response = await fetch("https://vehicle-co2-emission-production.up.railway.app/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

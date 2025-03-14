@@ -69,7 +69,7 @@ export default function CalcPage() {
     setShowAnimation(true)
 
     try {
-      const response = await fetch("https://negative-letti-zezodev-b30fb9c9.koyeb.app/co2_predict", {
+      const response = await fetch("https://vehicle-co2-emission-production.up.railway.app/co2_predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
